@@ -4,68 +4,70 @@ def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactor
 
 node('OpenDocsNode') {
   timestamps{
-    properties([
-      disableConcurrentBuilds(),
-      buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '30', daysToKeepStr: '', numToKeepStr: '30')),
-      parameters([
-        booleanParam(
-          name: 'UPDATE_JENKINS_PARAMETERS',
-          defaultValue: false,
-          description: 'Update the Jenkins parameters by failing the build.'
-        )
+    ansiColor('xterm') { // using ansi colours
+      properties([
+        disableConcurrentBuilds(),
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '30', daysToKeepStr: '', numToKeepStr: '30')),
+        parameters([
+          booleanParam(
+            name: 'UPDATE_JENKINS_PARAMETERS',
+            defaultValue: false,
+            description: 'Update the Jenkins parameters by failing the build.'
+          )
+        ])
       ])
-    ])
 
-    try {
-      // Checkout stage
-      stage('Checkout & Setup') {
-        checkout scm
+      try {
+        // Checkout stage
+        stage('Checkout & Setup') {
+          checkout scm
 
-        // Pulls docker images used in the pipeline. This is not strictly necessary but if the images
-        // are not available then the pipeline will fail early without wasting time doing the earlier steps.
-        HUGO_DOCKER_IMAGE.pull()
-        MARKDOWN_LINT_IMAGE.pull()
+          // Pulls docker images used in the pipeline. This is not strictly necessary but if the images
+          // are not available then the pipeline will fail early without wasting time doing the earlier steps.
+          HUGO_DOCKER_IMAGE.pull()
+          MARKDOWN_LINT_IMAGE.pull()
 
-        // Set some default parameter values so first build don't fail!
-        // if (BUILD_NUMBER=="1") {
-        //   echo "[INFO] Build running for first time so setting some default values to job parameters!"
-        //   env.MAKE_RELEASE=false
-        //   env.SKIP_SONAR=false
-        // }
-      } // end stage
+          // Set some default parameter values so first build don't fail!
+          // if (BUILD_NUMBER=="1") {
+          //   echo "[INFO] Build running for first time so setting some default values to job parameters!"
+          //   env.MAKE_RELEASE=false
+          //   env.SKIP_SONAR=false
+          // }
+        } // end stage
 
-      stage ('MarkdownLint') {
-        MARKDOWN_LINT_IMAGE.inside() {
-          sh 'markdownlint "content/en/**/*.md"'
-        }
-      } // end stage
+        stage ('MarkdownLint') {
+          MARKDOWN_LINT_IMAGE.inside() {
+            sh 'markdownlint "content/en/**/*.md"'
+          }
+        } // end stage
 
-      stage ('Build') {
-        HUGO_DOCKER_IMAGE.inside() {
-          sh 'bash build.sh'
-        }
+        stage ('Build') {
+          HUGO_DOCKER_IMAGE.inside() {
+            sh 'bash build.sh -n'
+          }
 
-      } // end stage
-    } // end try
-    // Catch the failure
-    catch(Exception e) {
-      // Set the build result as a fail, if not in place the pipeline will fail successfully
-      currentBuild.result = "FAILURE"
-      //
-      echo e
-      // Send email to maintainer and developers that caused the build failure.
-      // emailext subject: "Build Failure - ${env.JOB_NAME} Build Number - [${env.BUILD_NUMBER}]",
-      //   body: '${DEFAULT_CONTENT}',
-      //   to: 'wlai@axway.com',
-      //   recipientProviders: [
-      //     [$class: 'CulpritsRecipientProvider']
-      //   ]
-    } // end catch
-    finally {
-     echo "[INFO] Fin!"
-    }
-  }
-}
+        } // end stage
+      } // end try
+      // Catch the failure
+      catch(Exception e) {
+        // Set the build result as a fail, if not in place the pipeline will fail successfully
+        currentBuild.result = "FAILURE"
+        //
+        echo e
+        // Send email to maintainer and developers that caused the build failure.
+        // emailext subject: "Build Failure - ${env.JOB_NAME} Build Number - [${env.BUILD_NUMBER}]",
+        //   body: '${DEFAULT_CONTENT}',
+        //   to: 'wlai@axway.com',
+        //   recipientProviders: [
+        //     [$class: 'CulpritsRecipientProvider']
+        //   ]
+      } // end catch
+      finally {
+      echo "[INFO] Fin!"
+      }
+    } // end ansiColor
+  } // end timestamps
+} // end node
 
 def setYellowStatus(message) {
   catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
