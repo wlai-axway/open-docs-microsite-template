@@ -43,7 +43,7 @@ node('OpenDocsNode') {
 
         stage ('Build') {
           HUGO_DOCKER_IMAGE.inside() {
-            sh 'bash build.sh -n'
+            sh 'bash build.sh -m ci'
           }
 
         } // end stage
