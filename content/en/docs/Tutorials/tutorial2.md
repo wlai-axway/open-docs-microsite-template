@@ -34,7 +34,7 @@ Scenester tumeric pickled, authentic crucifix post-ironic fam freegan VHS pork b
 
 > This is a blockquote following a header. Bacon ipsum dolor sit amet t-bone doner shank drumstick, pork belly porchetta chuck sausage brisket ham hock rump pig. Chuck kielbasa leberkas, pork bresaola ham hock filet mignon cow shoulder short ribs biltong.
 
-## Header 3 ##
+### Header 3
 
 ```
 This is a code block following a header.
