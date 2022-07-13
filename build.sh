@@ -152,7 +152,7 @@ function fRunHugo() {
     if [[ "${MODE}" == "dev" ]];then
         hugo server
     elif [[ "${MODE}" == "ci" ]];then
-        hugi
+        hugo
     else
         echo "[ERROR] Build MODE [${MODE}] is invalid!!"
         exit 1
