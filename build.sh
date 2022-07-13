@@ -151,7 +151,7 @@ function fRunHugo() {
     cd ${BUILD_DIR}
     if [[ "${MODE}" == "dev" ]];then
         hugo server
-    elfi [[ "${MODE}" == "ci" ]];then
+    elif [[ "${MODE}" == "ci" ]];then
         hugi
     else
         echo "[ERROR] Build MODE [${MODE}] is invalid!!"
