@@ -7,14 +7,10 @@
 
 HUGO_VERSION="0.66.0"
 DOCKER_IMAGE="apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/hugo-extended:${HUGO_VERSION}"
-CONTAINER_NAME=""
-
-# The CI_* variables comes from gitlab ci pipelines
-#CI_PROJECT_NAME=${CI_PROJECT_NAME:-local}
-#CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH:-test}
-
-#CONTAINER_NAME="${CI_PROJECT_NAME}_${CI_COMMIT_BRANCH}"
-CONTAINER_NAME=${$(basename ${WORKSPACE}):-local-test}
+CONTAINER_NAME=local-test
+if [[ ! -z "${WORKSPACE}" ]];then
+    CONTAINER_NAME=$(basename ${WORKSPACE})
+fi
 
 PREVIEW_PORT=""
 CONTAINER_ID=""
