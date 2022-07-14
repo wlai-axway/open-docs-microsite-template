@@ -73,8 +73,8 @@ if [[ $? -ne 0 ]];then
 fi
 
 for ((x=0;x<20;x++)); do
-  echo "[INFO] Checking for web server available message ..."
-  sleep 10
+  echo "[INFO] Makes sure container is up and running ..."
+  sleep 5
   # Check if the container is running.
   CONTAINER_ID=`docker container ls -f name="^${CONTAINER_NAME}$" -q`
   if [[ -z "${CONTAINER_ID}" ]];then
