@@ -43,8 +43,9 @@ node('OpenDocsNode') {
 
         stage ('Build') {
           HUGO_DOCKER_IMAGE.inside() {
-            sh 'bash build.sh -m ci'
+             sh 'bash build.sh -m ci'
           }
+          sh 'bash run-docker-preview.sh'
 
         } // end stage
       } // end try
