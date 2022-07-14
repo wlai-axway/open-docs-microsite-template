@@ -4,6 +4,7 @@
 #   This is used by gitlab ci to start and manage docker instances for
 #   hosting previews of doc sites.
 # test
+set -e 
 
 DOCKER_IMAGE="httpd:2.4"
 CONTAINER_NAME=local-test
@@ -88,6 +89,9 @@ for ((x=0;x<20;x++)); do
       echo "=========================================================="
     fi
     exit 1
+  else
+    exit 0
+  fi
 #   else
 #     if docker logs ${CONTAINER_ID} 2>&1  | grep "Web Server is available" > /dev/null;then
 #       echo "=========================================================="
@@ -97,4 +101,5 @@ for ((x=0;x<20;x++)); do
 #     fi
   fi
 done
+# should never get to this point
 exit 1
