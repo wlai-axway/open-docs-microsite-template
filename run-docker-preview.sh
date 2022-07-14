@@ -92,14 +92,6 @@ for ((x=0;x<20;x++)); do
   else
     exit 0
   fi
-#   else
-#     if docker logs ${CONTAINER_ID} 2>&1  | grep "Web Server is available" > /dev/null;then
-#       echo "=========================================================="
-#       docker logs ${CONTAINER_ID} | sed -e "s|http://localhost:1313/|http://$(hostname -f):${PREVIEW_PORT}|g"
-#       echo "=========================================================="
-#       exit 0
-#     fi
-  fi
 done
 # should never get to this point
 exit 1
