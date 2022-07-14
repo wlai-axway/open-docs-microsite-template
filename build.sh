@@ -62,7 +62,12 @@ function fCheckoutSubmodule() {
         exit 1
     fi
     # the npm packages doesn't seem to be needed on the netify build server...this is just for developers
-    if [[ "${MODE}" == "dev" ]];then
+    #if [[ "${MODE}" == "dev" ]];then
+    echo "_auth = 
+always-auth = false
+email = 
+registry = http://registry.ecd.axway.int/artifactory/api/npm/registry-npm" > .npmrc
+
         echo "[INFO] Install npm packages required by docsy."
     	if [[ ! -d "node_modules" ]];then
             if [[ -f "package.json" ]];then
@@ -73,7 +78,7 @@ function fCheckoutSubmodule() {
     		    npm install -D --save postcss-cli
             fi
     	fi
-    fi
+    #fi
 }
 
 # fMergeContent:
