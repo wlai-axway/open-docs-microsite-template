@@ -65,6 +65,7 @@ registry = http://registry.ecd.axway.int/artifactory/api/npm/registry-npm" > .np
 
 mkdir -p .npm
 # Not using docker --rm option so we can see logs of containers that failed to start.
+docker rm -f "${CONTAINER_NAME}"
 docker run -d \
   --restart unless-stopped \
   -v $(pwd):$(pwd) \
