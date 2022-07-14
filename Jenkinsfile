@@ -42,12 +42,17 @@ node('OpenDocsNode') {
         } // end stage
 
         stage ('Build') {
-          HUGO_DOCKER_IMAGE.inside() {
+          sh 'mkdir -p .npm'
+          HUGO_DOCKER_IMAGE.inside("-v ${WORKSPACE}/.npm:/.npm") {
              sh 'bash build.sh -m ci'
           }
-          sh 'bash run-docker-preview.sh'
 
         } // end stage
+
+        stage ('Start Preview') {
+          sh 'bash run-docker-preview.sh'
+        } // end stage
+
       } // end try
       // Catch the failure
       catch(Exception e) {

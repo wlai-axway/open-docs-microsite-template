@@ -5,12 +5,13 @@
 #   hosting previews of doc sites.
 # test
 
-HUGO_VERSION="0.66.0"
-DOCKER_IMAGE="apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/hugo-extended:${HUGO_VERSION}"
+DOCKER_IMAGE="httpd:2.4"
 CONTAINER_NAME=local-test
 if [[ ! -z "${WORKSPACE}" ]];then
     CONTAINER_NAME=$(basename ${WORKSPACE})
 fi
+
+PREVIEW_DIR=/opt/opendocs-previews/${CONTAINER_NAME}
 
 PREVIEW_PORT=""
 CONTAINER_ID=""
@@ -56,27 +57,16 @@ if [[ ! -z "${CONTAINER_ID}" ]];then
     docker rm -f ${CONTAINER_ID}
 fi
 
-# Create an .npmrc file so npm install will pull npm packages from
-# Axway registry instead of the internet.
-echo "_auth = 
-always-auth = false
-email = 
-registry = http://registry.ecd.axway.int/artifactory/api/npm/registry-npm" > .npmrc
+rm -rf ${PREVIEW_DIR}
+mkdir -p ${PREVIEW_DIR}
+cp -r ${WORKSPACE}/build/public/* ${PREVIEW_DIR}
 
-mkdir -p .npm
-# Not using docker --rm option so we can see logs of containers that failed to start.
-docker rm -f "${CONTAINER_NAME}"
 docker run -d \
   --restart unless-stopped \
-  -v $(pwd):$(pwd) \
-  -v $(pwd)/.npm:/.npm \
-  -w $(pwd) \
-  -u $(id -u ${USER}):$(id -g ${USER}) \
-  -p ${PREVIEW_PORT}:1313 \
+  -v $(pwd):/usr/local/apache2/htdocs/ \
+  -p 8081:80 \
   --name "${CONTAINER_NAME}" \
-  ${DOCKER_IMAGE} \
-  /bin/bash -c "./build.sh"
-
+  ${DOCKER_IMAGE}
 if [[ $? -ne 0 ]];then
   exit 1
 fi
@@ -98,13 +88,13 @@ for ((x=0;x<20;x++)); do
       echo "=========================================================="
     fi
     exit 1
-  else
-    if docker logs ${CONTAINER_ID} 2>&1  | grep "Web Server is available" > /dev/null;then
-      echo "=========================================================="
-      docker logs ${CONTAINER_ID} | sed -e "s|http://localhost:1313/|http://$(hostname -f):${PREVIEW_PORT}|g"
-      echo "=========================================================="
-      exit 0
-    fi
+#   else
+#     if docker logs ${CONTAINER_ID} 2>&1  | grep "Web Server is available" > /dev/null;then
+#       echo "=========================================================="
+#       docker logs ${CONTAINER_ID} | sed -e "s|http://localhost:1313/|http://$(hostname -f):${PREVIEW_PORT}|g"
+#       echo "=========================================================="
+#       exit 0
+#     fi
   fi
 done
 exit 1
