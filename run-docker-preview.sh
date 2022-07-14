@@ -63,7 +63,7 @@ always-auth = false
 email = 
 registry = http://registry.ecd.axway.int/artifactory/api/npm/registry-npm" > .npmrc
 
-mkdir .npm
+mkdir -p .npm
 # Not using docker --rm option so we can see logs of containers that failed to start.
 docker run -d \
   --restart unless-stopped \
