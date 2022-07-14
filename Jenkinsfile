@@ -53,6 +53,7 @@ node('OpenDocsNode') {
           sh 'bash run-docker-preview.sh'
           String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
           String previewUrl = readFile('_preview_url.txt').trim()
+          echo "${previewUrl}"
           currentBuild.description="[commit] <strong>${currentCommit}</strong><br>[preview] <strong><a href=\"${previewUrl}\">#LINK#</a></strong>"
         } // end stage
 
