@@ -64,8 +64,8 @@ cp -r ${WORKSPACE}/build/public/* ${PREVIEW_DIR}
 
 docker run -d \
   --restart unless-stopped \
-  -v $(pwd):/usr/local/apache2/htdocs/ \
-  -p 8081:80 \
+  -v ${PREVIEW_DIR}:/usr/local/apache2/htdocs/ \
+  -p ${PREVIEW_PORT}:80 \
   --name "${CONTAINER_NAME}" \
   ${DOCKER_IMAGE}
 if [[ $? -ne 0 ]];then
@@ -90,6 +90,8 @@ for ((x=0;x<20;x++)); do
     fi
     exit 1
   else
+    echo "[INFO] Preview URL is http://$(hostname -f):${PREVIEW_PORT}/ !"
+    echo "http://$(hostname -f):${PREVIEW_PORT}/" > _preview_url.txt
     exit 0
   fi
 done
