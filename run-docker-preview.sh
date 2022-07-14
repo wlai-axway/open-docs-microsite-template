@@ -74,7 +74,7 @@ fi
 
 for ((x=0;x<20;x++)); do
   echo "[INFO] Checking for web server available message ..."
-  sleep 15
+  sleep 10
   # Check if the container is running.
   CONTAINER_ID=`docker container ls -f name="^${CONTAINER_NAME}$" -q`
   if [[ -z "${CONTAINER_ID}" ]];then
