@@ -54,7 +54,7 @@ node('OpenDocsNode') {
           sh 'bash scripts/ci-run-docker-preview.sh'
           String previewUrl = readFile('_preview_url.txt').trim()
           echo "${previewUrl}"
-          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl} target=\"_blank\"\">#LINK#</a></strong>"
+          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ᕙ(⇀‸↼‶)ᕗ </a></strong>"
         } // end stage
 
       } // end try
