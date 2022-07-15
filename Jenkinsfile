@@ -33,8 +33,11 @@ node('OpenDocsNode') {
           //   env.MAKE_RELEASE=false
           //   env.SKIP_SONAR=false
           // }
+          String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
+          currentBuild.description="[commit] <strong>${currentCommit}</strong><br>[preview] <strong><a href=\"${previewUrl}\">#LINK#</a></strong>"
         } // end stage
 
+        // Potentially duplicating something already done using github workflows but it runs quick.
         stage ('MarkdownLint') {
           MARKDOWN_LINT_IMAGE.inside() {
             sh 'markdownlint "content/en/**/*.md"'
@@ -42,19 +45,17 @@ node('OpenDocsNode') {
         } // end stage
 
         stage ('Build') {
-          sh 'mkdir -p .npm'
-          HUGO_DOCKER_IMAGE.inside("-v ${WORKSPACE}/.npm:/.npm") {
+          HUGO_DOCKER_IMAGE.inside() {
              sh 'bash build.sh -m ci'
           }
 
         } // end stage
 
         stage ('Start Preview') {
-          sh 'bash run-docker-preview.sh'
-          String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
+          sh 'bash scripts/ci-run-docker-preview.sh'
           String previewUrl = readFile('_preview_url.txt').trim()
           echo "${previewUrl}"
-          currentBuild.description="[commit] <strong>${currentCommit}</strong><br>[preview] <strong><a href=\"${previewUrl}\">#LINK#</a></strong>"
+          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\">#LINK#</a></strong>"
         } // end stage
 
       } // end try
@@ -73,7 +74,7 @@ node('OpenDocsNode') {
         //   ]
       } // end catch
       finally {
-      echo "[INFO] Fin!"
+        echo "[INFO] Fin!"
       }
     } // end ansiColor
   } // end timestamps
