@@ -34,7 +34,7 @@ node('OpenDocsNode') {
           //   env.SKIP_SONAR=false
           // }
           String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
-          currentBuild.description="[commit] <strong>${currentCommit}</strong><br>[preview] <strong><a href=\"${previewUrl}\">#LINK#</a></strong>"
+          currentBuild.description="[commit] <strong>${currentCommit}</strong>"
         } // end stage
 
         // Potentially duplicating something already done using github workflows but it runs quick.
