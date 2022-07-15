@@ -30,6 +30,11 @@ node('OpenDocsNode') {
 
           String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
           currentBuild.description="[commit] <strong>${currentCommit}</strong>"
+
+          // Add the .npm file hosted on Jenkins to the workspace so npm pulls packages from internal servers.
+          configFileProvider([configFile(fileId: "axway-dot-npm", variable: 'DOT_NPM_PATH')]) {
+            sh 'cp ${DOT_NPM_PATH} .npm'
+          }
         } // end stage
 
         // Potentially duplicating something already done using github workflows but it runs quick.
