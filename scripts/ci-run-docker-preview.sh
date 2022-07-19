@@ -1,23 +1,22 @@
 #!/bin/bash
 #
 # Description:
-#   This is used by gitlab ci to start and manage docker instances for
-#   hosting previews of doc sites.
-# test
+#   This is used by Jenkins to start previews of doc sites.
 set -e 
 
 DOCKER_IMAGE="httpd:2.4"
-CONTAINER_NAME=local-test
-if [[ ! -z "${WORKSPACE}" ]];then
-    CONTAINER_NAME=$(basename ${WORKSPACE})
-fi
 
-PREVIEW_DIR=/opt/opendocs-previews/${CONTAINER_NAME}
+CONTAINER_NAME=localtest
+WORKSPACE=${WORKSPACE}
 NODE_NAME="${NODE_NAME}"
-
+PREVIEW_DIR=/opt/opendocs-previews/${CONTAINER_NAME}
 PREVIEW_PORT=""
 CONTAINER_ID=""
 
+
+if [[ ! -z "${WORKSPACE}" ]];then
+    CONTAINER_NAME=$(basename ${WORKSPACE})
+fi
 echo "[INFO] CONTAINER_NAME set to [${CONTAINER_NAME}]."
 
 # Find and reuse port already used for the pipeline.
@@ -58,11 +57,17 @@ if [[ ! -z "${CONTAINER_ID}" ]];then
     echo "[INFO] Removing stopped container [${CONTAINER_ID}]!"
     docker rm -f ${CONTAINER_ID}
 fi
+echo "[INFO]"
 
+echo "[INFO] Copying generated static website files:"
+echo "[INFO]    from [${WORKSPACE}/build/public/]"
+echo "[INFO]      to [${PREVIEW_DIR}]"
 rm -rf ${PREVIEW_DIR}
 mkdir -p ${PREVIEW_DIR}
 cp -r ${WORKSPACE}/build/public/* ${PREVIEW_DIR}
+echo "[INFO]"
 
+echo "[INFO] Startibg docker insrance [${CONTAINER_ID}]!" 
 docker run -d \
   --restart unless-stopped \
   -v ${PREVIEW_DIR}:/usr/local/apache2/htdocs/ \
@@ -72,14 +77,15 @@ docker run -d \
 if [[ $? -ne 0 ]];then
   exit 1
 fi
+echo "[INFO]"
 
+echo "[INFO] Makes sure container is up and running ..."
 for ((x=0;x<20;x++)); do
-  echo "[INFO] Makes sure container is up and running ..."
   sleep 5
-  # Check if the container is running.
   CONTAINER_ID=`docker container ls -f name="^${CONTAINER_NAME}$" -q`
   if [[ -z "${CONTAINER_ID}" ]];then
-    echo "[ERROR] Didn't find running container named [${CONTAINER_NAME}]."
+    echo "[WARN] Didn't find running container named [${CONTAINER_NAME}]."
+    # see if docker instance exist ... if yes then print the logs
     CONTAINER_ID=`docker container ls -a -f name="^${CONTAINER_NAME}$" -q`
     if [[ -z "${CONTAINER_ID}" ]];then
       echo "[ERROR] Didn't find stopped container named [${CONTAINER_NAME}]."
@@ -88,27 +94,28 @@ for ((x=0;x<20;x++)); do
       echo "=========================================================="
       docker logs ${CONTAINER_ID}
       echo "=========================================================="
+      break
     fi
     exit 1
-  else
-
-    # This is just to make sure the humanly readable alias hostname is used in the preview link.
-    alt_hostname=""
-    if [[ ! -z "${NODE_NAME}" ]];then
-      orig_hostname=$(hostname -f)
-      orig_short_host=$(hostname -s)
-      orig_ip=$(hostname -i)
-      alt_hostname=$(echo ${orig_hostname} | sed -e "s|${orig_short_host}|${NODE_NAME}|g")
-    fi
-
-    if [[ "${orig_ip}" == "$(dig ${alt_hostname} +short | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')" ]];then
-      echo "[INFO] Preview URL is http://${alt_hostname}:${PREVIEW_PORT}/ !"
-      echo "http://${alt_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
-    else
-      echo "[INFO] Preview URL is http://${orig_hostname}:${PREVIEW_PORT}/ !"
-      echo "http://${orig_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
-    fi
-    exit 0
 done
-# should never get to this point
-exit 1
+echo "[INFO]"
+
+# This is just to make sure the humanly readable alias hostname is used in the preview link.
+alt_hostname=""
+orig_ip=""
+if [[ ! -z "${NODE_NAME}" ]];then
+  orig_hostname=$(hostname -f)
+  orig_short_host=$(hostname -s)
+  orig_ip=$(hostname -i)
+  alt_hostname=$(echo ${orig_hostname} | sed -e "s|${orig_short_host}|${NODE_NAME}|g")
+fi
+
+if [[ "${orig_ip}" == "$(dig ${alt_hostname} +short | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')" ]];then
+  echo "[INFO] Preview URL is http://${alt_hostname}:${PREVIEW_PORT}/ !"
+  echo "http://${alt_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
+else
+  echo "[INFO] Preview URL is http://${orig_hostname}:${PREVIEW_PORT}/ !"
+  echo "http://${orig_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
+fi
+exit 0
+
