@@ -94,9 +94,10 @@ for ((x=0;x<20;x++)); do
       echo "=========================================================="
       docker logs ${CONTAINER_ID}
       echo "=========================================================="
-      break
     fi
     exit 1
+  else 
+    break
   fi
 done
 echo "[INFO]"
