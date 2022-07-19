@@ -4,7 +4,7 @@ def HUGO_DOCKER_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-
 def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/markdownlint-cli:0.28.1')
 
 // The Jenkins node just need to be using the specified label. The node shouldn't need anything preinstalled apart from docker daemon.
-node('OpenDocsNode') {
+node('OpendocsBuilder') {
   timestamps{  // enable timestamp in the console logs
     ansiColor('xterm') { // using ansi colours
       properties([
@@ -54,7 +54,7 @@ node('OpenDocsNode') {
           sh 'bash scripts/ci-run-docker-preview.sh'
           String previewUrl = readFile('_preview_url.txt').trim()
           echo "${previewUrl}"
-          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ᕙ(⇀‸↼‶)ᕗ </a></strong>"
+          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ♫♫♫ cliiiick oooon meeee ♫♫♫ </a></strong>"
         } // end stage
 
       } // end try
