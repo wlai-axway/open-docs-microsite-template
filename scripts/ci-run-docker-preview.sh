@@ -67,7 +67,7 @@ mkdir -p ${PREVIEW_DIR}
 cp -r ${WORKSPACE}/build/public/* ${PREVIEW_DIR}
 echo "[INFO]"
 
-echo "[INFO] Startibg docker insrance [${CONTAINER_ID}]!" 
+echo "[INFO] Startibg docker container [${CONTAINER_ID}]!" 
 docker run -d \
   --restart unless-stopped \
   -v ${PREVIEW_DIR}:/usr/local/apache2/htdocs/ \
@@ -97,6 +97,7 @@ for ((x=0;x<20;x++)); do
       break
     fi
     exit 1
+  fi
 done
 echo "[INFO]"
 
