@@ -13,6 +13,7 @@ if [[ ! -z "${WORKSPACE}" ]];then
 fi
 
 PREVIEW_DIR=/opt/opendocs-previews/${CONTAINER_NAME}
+NODE_NAME="${NODE_NAME}"
 
 PREVIEW_PORT=""
 CONTAINER_ID=""
@@ -90,10 +91,24 @@ for ((x=0;x<20;x++)); do
     fi
     exit 1
   else
-    echo "[INFO] Preview URL is http://$(hostname -f):${PREVIEW_PORT}/ !"
-    echo "http://$(hostname -f):${PREVIEW_PORT}/" > _preview_url.txt
+
+    # This is just to make sure the humanly readable alias hostname is used in the preview link.
+    alt_hostname=""
+    if [[ ! -z "${NODE_NAME}" ]];then
+      orig_hostname=$(hostname -f)
+      orig_short_host=$(hostname -s)
+      orig_ip=$(hostname -i)
+      alt_hostname=$(echo ${orig_hostname} | sed -e "s|${orig_short_host}|${NODE_NAME}|g")
+    fi
+
+    if [[ "${orig_ip}" == "$(dig ${alt_hostname} +short | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b')" ]];then
+      echo "[INFO] Preview URL is http://${alt_hostname}:${PREVIEW_PORT}/ !"
+      echo "http://${alt_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
+    else
+      echo "[INFO] Preview URL is http://${orig_hostname}:${PREVIEW_PORT}/ !"
+      echo "http://${orig_hostname}:${PREVIEW_PORT}/" > _preview_url.txt
+    fi
     exit 0
-  fi
 done
 # should never get to this point
 exit 1
