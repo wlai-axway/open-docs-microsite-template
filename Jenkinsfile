@@ -2,7 +2,7 @@
 def HUGO_DOCKER_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/hugo-extended:0.66.0')
 def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/markdownlint-cli:0.28.1')
 
-node('OpenDocsNode') {
+node('OpendocsBuilder') {
   timestamps{
     ansiColor('xterm') { // using ansi colours
       properties([
