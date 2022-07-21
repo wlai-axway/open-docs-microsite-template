@@ -34,9 +34,9 @@ node('OpendocsBuilder') {
           String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
           currentBuild.description="[commit] <strong>${currentCommit}</strong>"
 
-          // Add the .npm file hosted on Jenkins to the workspace so npm pulls packages from internal servers.
-          configFileProvider([configFile(fileId: "axway-dot-npm", variable: 'DOT_NPM_PATH')]) {
-            sh 'cp ${DOT_NPM_PATH} .npm'
+          // Add the .npmrc file hosted on Jenkins to the workspace so npm pulls packages from internal servers.
+          configFileProvider([configFile(fileId: "axway-dot-npmrc", variable: 'DOT_NPMRC_FILE')]) {
+            sh 'cp ${DOT_NPMRC_FILE} ${WORKSPACE}/.npmrc'
           }
         } // end stage
 
