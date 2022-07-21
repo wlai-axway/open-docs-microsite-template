@@ -54,9 +54,12 @@ node('OpendocsBuilder') {
           configFileProvider([configFile(fileId: "opendocs-preview-test", variable: 'PREVIEW_SCRIPT')]) {
             sh 'bash ${PREVIEW_SCRIPT} 2>&1 | tee ${WORKSPACE}/opendocs-preview.log'
           }
-          String previewUrl = readFile('_preview_url.txt').trim()
-          echo "${previewUrl}"
-          currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ♫♫♫ cliiiick oooon meeee ♫♫♫ </a></strong>"
+          if (fileExists('_preview_url.txt')) {
+            String previewUrl = readFile('_preview_url.txt').trim()
+            echo "${previewUrl}"
+            currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ♫♫♫ cliiiick oooon meeee ♫♫♫ </a></strong>"
+          }
+
         } // end stage
 
       } // end try
