@@ -3,6 +3,9 @@
 def HUGO_DOCKER_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/hugo-extended:0.66.0')
 def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/markdownlint-cli:0.28.1')
 
+// Only enable this for development branches. Don't enable it for master/main etc.
+//env.FORCE_CREATE_PREVIEW = "true"
+
 // The Jenkins node just need to be using the specified label. The node shouldn't need anything preinstalled apart from docker daemon.
 node('OpendocsBuilder') {
   timestamps{  // enable timestamp in the console logs
