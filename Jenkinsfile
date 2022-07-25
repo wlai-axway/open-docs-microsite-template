@@ -92,12 +92,10 @@ node('OpendocsBuilder') {
         //   ]
       } // end catch
       finally {
-        if (currentBuild.result == 'SUCCESS') {
-          if (fileExists("public.zip")) {
-            archiveArtifacts artifacts: "public.zip", fingerprint: true
-          } else {
-            echo "[WARN] The folder [build/public/] not found!"
-          }
+        if (fileExists("public.zip")) {
+          archiveArtifacts artifacts: "public.zip", fingerprint: true
+        } else {
+          echo "[WARN] The folder [build/public/] not found!"
         }
         echo "[INFO] Fin!"
       }
