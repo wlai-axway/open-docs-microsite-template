@@ -23,13 +23,7 @@ node('OpendocsBuilder') {
     ansiColor('xterm') { // using ansi colours
       properties([
         disableConcurrentBuilds(),
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '30', daysToKeepStr: '', numToKeepStr: '30')),
-        parameters([
-          booleanParam(
-            name: 'UPDATE_JENKINS_PARAMETERS',
-            defaultValue: false,
-            description: 'Update the Jenkins parameters by failing the build.'
-          )
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '30', daysToKeepStr: '', numToKeepStr: '30'))
         ])
       ])
 
@@ -99,6 +93,17 @@ node('OpendocsBuilder') {
         //   ]
       } // end catch
       finally {
+        if (currentBuild.result == 'SUCCESS') {
+          if (fileExists("build/public/")) {
+            sh '''
+              cd build/public
+              zip -r ${WORKSPACE}/public.zip .
+            '''
+            archiveArtifacts artifacts: "${WORKSPACE}/public.zip", fingerprint: true
+          } else
+            echo "[WARN] The folder [build/public/] not found!"
+        }
+        }
         echo "[INFO] Fin!"
       }
     } // end ansiColor
