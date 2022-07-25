@@ -4,11 +4,19 @@ def HUGO_DOCKER_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-
 def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/markdownlint-cli:0.28.1')
 
 // By default the script that creates the previews will do so for the master/main branch and pull request branches. This
-// variable can be used to tell the script to create previews for feature branches. Use a command separated list if you
-// need previews for multiple branches.
-env.ENABLE_PREVIEWS_FOR = "developaug22 RDAPI-27806-4"
+// variable can be used to tell the script to create previews for feature branches. TO enable previews for multiple branches
+// then use the same variable but separate the names using space or comma.
+env.PREVIEW_FOR_BRANCHES = "developaug22 RDAPI-27806-4"
 
-// The Jenkins node just need to be using the specified label. The node shouldn't need anything preinstalled apart from docker daemon.
+// The Jenkins server have the following requirements:
+//  - a Jenkins node with the name or label set to "OpendocsBuilder"
+//  - docker daemon installed on this node
+//  - apache2/httpd daemon installed on this node
+//  - the Jenkins node user (if not root) has sudo no password permission to run "systemctl * httpd"
+//  - the Jenkins node user (if not root) has ownership of folder /opt/openshift-previews/
+//  - the Jenkins server needs the following managed files:
+//    - axway-dot-npmrc: file to tell npm to install packages using internal Axway servers
+//    - opendocs-preview-test: script for managing the httpd server and preview content
 node('OpendocsBuilder') {
   timestamps{  // enable timestamp in the console logs
     ansiColor('xterm') { // using ansi colours
@@ -58,9 +66,10 @@ node('OpendocsBuilder') {
         // Notes:
         //  - the opendocs-preview script is hosted on Jenkins and it's used to manage the preview sites on the Jenkins slave
         //  - the Jenkinsfile just need to access it using the configFileProvider configuration
-        //  - it will always generate previews for the master/main branch and PR-nnn (pull request branches)
-        //  - set the env.ENABLE_PREVIEW_FOR_BRANCH with a branch name 
+        //  - it will always generate previews for the master/main branch and pull request branches (PR-n)
+        //  - use the env.PREVIEW_FOR_BRANCHES variable to enable previews for development branches
         stage ('Start Preview') {
+          //configFileProvider([configFile(fileId: "opendocs-preview-live", variable: 'PREVIEW_SCRIPT')]) {
           configFileProvider([configFile(fileId: "opendocs-preview-test", variable: 'PREVIEW_SCRIPT')]) {
             sh 'bash ${PREVIEW_SCRIPT} 2>&1 | tee ${WORKSPACE}/opendocs-preview.log'
           }
