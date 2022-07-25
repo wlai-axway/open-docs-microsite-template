@@ -23,8 +23,7 @@ node('OpendocsBuilder') {
     ansiColor('xterm') { // using ansi colours
       properties([
         disableConcurrentBuilds(),
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '30', daysToKeepStr: '', numToKeepStr: '30'))
-        ])
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '20', daysToKeepStr: '', numToKeepStr: '20'))
       ])
 
       try {
