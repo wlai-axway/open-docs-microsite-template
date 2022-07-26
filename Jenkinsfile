@@ -54,6 +54,7 @@ node('OpendocsBuilder') {
                 cp ${DOT_NPMRC_FILE} ${WORKSPACE}/.npmrc
                 bash build.sh -m ci
               '''
+            }
           }
         } // end stage
 
