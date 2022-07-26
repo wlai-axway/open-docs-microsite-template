@@ -37,11 +37,6 @@ node('OpendocsBuilder') {
 
           String currentCommit = sh ( script: 'git rev-parse --short --verify HEAD',returnStdout: true).trim()
           currentBuild.description="[commit] <strong>${currentCommit}</strong>"
-
-          // Add the .npmrc file hosted on Jenkins to the workspace so npm pulls packages from internal servers.
-          configFileProvider([configFile(fileId: "axway-dot-npmrc", variable: 'DOT_NPMRC_FILE')]) {
-            sh 'cp ${DOT_NPMRC_FILE} ${WORKSPACE}/.npmrc'
-          }
         } // end stage
 
         // Potentially duplicating something already done using github workflows but it runs quick.
@@ -53,7 +48,12 @@ node('OpendocsBuilder') {
 
         stage ('Build') {
           HUGO_DOCKER_IMAGE.inside() {
-             sh 'bash build.sh -m ci'
+            // Add the .npmrc file hosted on Jenkins to the workspace so npm pulls packages from internal servers.
+            configFileProvider([configFile(fileId: "axway-dot-npmrc", variable: 'DOT_NPMRC_FILE')]) {
+              sh '''
+                cp ${DOT_NPMRC_FILE} ${WORKSPACE}/.npmrc
+                bash build.sh -m ci
+              '''
           }
         } // end stage
 
