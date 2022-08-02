@@ -149,14 +149,30 @@ function fMergeContent() {
 
 function fRunHugo() {
     cd ${BUILD_DIR}
-    if [[ "${MODE}" == "dev" ]];then
-        hugo server
-    elif [[ "${MODE}" == "ci" ]];then
-        hugo
-    else
-        echo "[ERROR] Build MODE [${MODE}] is invalid!!"
-        exit 1
-    fi
+    # The modes "nelify" and nelify-preview
+    mkdir public
+    case "${MODE}" in
+      "dev") 
+          hugo server
+          ;;
+      "ci")
+          hugo
+          ;;
+      "nelify") 
+          hugo
+          # Moving the "publish" directory to the ROOT of the workspace. Netlify can't publish a
+          # different directory even if the "Publish directory" is changed to specify a different directory.
+          mv -f ${BUILD_DIR}/public ${PROJECT_DIR}
+          ;;
+      "nelify-preview") 
+          hugo -b $DEPLOY_PRIME_URL
+          mv -f ${BUILD_DIR}/public ${PROJECT_DIR}
+          ;;
+      *)
+          echo "[ERROR] Build MODE [${MODE}] is invalid!!"
+          exit 1
+          ;;
+    esac
 }
 
 fCheckoutSubmodule

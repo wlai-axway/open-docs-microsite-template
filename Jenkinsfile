@@ -74,6 +74,10 @@ node('OpendocsBuilder') {
             String previewUrl = readFile('_preview_url.txt').trim()
             echo "${previewUrl}"
             currentBuild.description = currentBuild.description + "<br>[preview] <strong><a href=\"${previewUrl}\" target=\"_blank\"> ♫♫♫ cliiiick oooon meeee ♫♫♫ </a></strong>"
+          } else {
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+              error('throwing error to make stage yellow')
+            }
           }
         } // end stage
 
