@@ -6,7 +6,7 @@
 #	but the theme "docsy" is not compatible with it at the moment. Once "docsy"
 #	have been updated by the devs to work with hugo modules then we can abandon this
 #	and use hugo modules instead.
-#
+#wing was here
 # Description:
 #   This is roughly the flow of the script:
 #     1. make sure "themes/docsy/"" submodule is checked out recursively
