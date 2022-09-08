@@ -83,7 +83,7 @@ node('OpendocsBuilder') {
             currentBuild.description = readFile('_preview_build_description.html').trim() // set the job description with generated links
 
             // send email only to axway.com email addresses
-            if (fileExists('_preview_email_body.html') && fileExists('_preview_email_author.html') ) {
+            if (fileExists('_preview_email_author.txt') ) {
               emailext subject: '${FILE,path="_preview_email_subject.txt"}', mimeType: 'text/html', to: '${FILE,path="_preview_email_author.txt"}', body: '${FILE,path="_preview_email_body.html"}'
             }
           } else {
