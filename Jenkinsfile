@@ -18,7 +18,7 @@ String CURRENT_COMMIT
 // variable env.PREVIEW_FOR_BRANCHES can be used to tell the script to create previews for feature branches. Use
 // the same variable but with comma or space separated list if you need to enable previews for multiple branches.
 // e.g. env.PREVIEW_FOR_BRANCHES = "developaug22 developdec22"
-env.PREVIEW_FOR_BRANCHES = "developmay22 developaug22 developnov22"
+env.PREVIEW_FOR_BRANCHES = "developmay22 developaug22 developnov22 wingtest2"
 
 node('OpendocsBuilder') {
   timestamps{  // enable timestamp in the console logs
