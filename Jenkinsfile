@@ -68,7 +68,6 @@ node('OpendocsBuilder') {
         //  - the script will cleanup old previews if the corresponding branches have been deleted
         stage ('Start Preview') {
           withCredentials([
-            string(credentialsId: 'AXWAY_KEYSTORE_PASSWORD', variable: 'AXWAY_KEYSTORE_PASSWORD'),
             usernamePassword(credentialsId: 'GITHUB_OPENDOCS_CREDS', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')
           ]) {
             //configFileProvider([configFile(fileId: "opendocs-preview-live", variable: 'PREVIEW_SCRIPT')]) {
