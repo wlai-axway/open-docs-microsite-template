@@ -30,7 +30,7 @@ node('OpendocsBuilder') {
             defaultValue: 'test',
             description: 'test',
             trim: false)
-        ]}
+        ])
       ])
 
       try {
