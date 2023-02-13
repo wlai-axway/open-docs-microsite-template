@@ -41,10 +41,6 @@ node('OpendocsBuilder') {
           currentBuild.description="[commit] <strong>${currentCommit}</strong>"
         } // end stage
 
-
-        } // end stage
-
-
       } // end try
       // Catch the failure
       catch(Exception e) {
