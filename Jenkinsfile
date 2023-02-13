@@ -7,7 +7,7 @@
 //  6. the Jenkins server needs the following managed files:
 //    - axway-dot-npmrc: file to tell npm to install packages using internal Axway servers
 //    - opendocs-preview-live: script for managing the httpd service and preview content
-
+@Library('axway-dubl-libraries@RDAPI-29169-hugo-module')_
 // CI docker images for internal Axway use.
 def HUGO_DOCKER_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/hugo-extended:0.101.0')
 def MARKDOWN_LINT_IMAGE = docker.image('apigateway-docker-release-ptx.artifactory-ptx.ecd.axway.int/build/markdownlint-cli:0.28.1')
