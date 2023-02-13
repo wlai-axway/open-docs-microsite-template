@@ -29,6 +29,11 @@ node('OpendocsBuilder') {
             name: 'test',
             defaultValue: 'test',
             description: 'test',
+            trim: false),
+          string(
+            name: 'test2',
+            defaultValue: 'test2',
+            description: 'test2',
             trim: false)
         ])
       ])
